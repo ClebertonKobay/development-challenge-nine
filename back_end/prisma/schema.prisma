@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Patient {
+  id            String   @id @default(uuid())
+  name          String
+  email         String
+  birthDay      DateTime
+  address       String
+  addressNumber Int
+  districtId    String
+  distric       District @relation(fields: [districtId], references: [id])
+}
+
+model District {
+  id      String    @id @default(uuid())
+  name    String
+  cityId  String
+  Patient Patient[]
+  city    City      @relation(fields: [cityId], references: [id])
+}
+
+model City {
+  id       String     @id @default(uuid())
+  name     String
+  stateId  String
+  state    State      @relation(fields: [stateId], references: [id])
+  District District[]
+}
+
+model State {
+  id        String  @id @default(uuid())
+  name      String
+  countryId String
+  country   Country @relation(fields: [countryId], references: [id])
+  City      City[]
+}
+
+model Country {
+  id    String  @id @default(uuid())
+  name  String
+  State State[]
+}
+
+model User {
+  id       String @id @default(uuid())
+  username String @unique
+  password String
+}
